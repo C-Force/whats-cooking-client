@@ -1,14 +1,47 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Ionic Blank
+      <div class="tinder-toggle" (click)="toggleActive()"> 
+        <div [class.active]="!toggle"><ion-icon name="md-albums"></ion-icon></div>
+        <div [class.active]="toggle"><ion-icon name="md-list"></ion-icon></div>
+      </div>
     </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only>
+        <ion-icon name="person"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
+ 
+<ion-content class="home" padding>
+  <div *ngIf="!toggle" swing-stack #myswing1 [stackConfig]="stackConfig" (throwoutleft)="voteUp(true)" (throwoutright)="voteUp(false)" (throwoutdown)="voteUp(false)" (throwoutup)="voteUp(true)" id="card-stack" [style.zIndex]="-1000">
+      <ion-card #mycards1 swing-card *ngFor="let c of cards; trackBy:trackByCards; let i=index;" [style.zIndex]="-1 * i" [style.marginTop]="i === 0 ? '0px ': '12px'">
+        <ion-item>
+          <img class="image" [src]="c.image">
+          <h2>{{ c.name }}</h2>
+          <p>{{ c.mealtime }}</p>
+        </ion-item>
 
-<ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+        <ion-card-content *ngIf="c.location">
+          From: {{ c.location }}, {{ c.cafe }}<br>
+          Phone: {{ c.vegetarian }}
+        </ion-card-content>
+        
+      </ion-card>
+      <div class="card-actions">
+          <button class="rounded button no" (click)="voteUp(true)" ion-button icon-only>
+            <ion-icon name="close"></ion-icon>
+          </button>
+          <button class="rounded button like" (click)="voteUp(false)" ion-button icon-only>
+            <ion-icon name="heart"></ion-icon>
+          </button>
+          <button class="rounded button detail" ion-button icon-only>
+            <ion-icon name="md-list-box"></ion-icon>
+          </button>
+        </div>
+    </div>
+    <div *ngIf="toggle">
+      Testing
+    </div>
 </ion-content>

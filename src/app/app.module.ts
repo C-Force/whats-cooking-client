@@ -7,7 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
 import { AuthProvider } from '../providers/auth/auth';
-import { DishProvider } from '../providers/dish/dish';
+import { MenuProvider } from '../providers/menu/menu';
 
 @NgModule({
   declarations: [
@@ -27,7 +27,7 @@ import { DishProvider } from '../providers/dish/dish';
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     AuthProvider,
-    DishProvider,
+    MenuProvider,
   ]
 })
 export class AppModule {}

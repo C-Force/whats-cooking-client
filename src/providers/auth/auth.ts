@@ -13,20 +13,39 @@ export class User {
   }
 }
 
+export class Credentials {
+  email: string;
+  password: string;
+
+  constructor(email: string, password: string) {
+    this.email = email;
+    this.password = password;
+  }
+}
+
 @Injectable()
 export class AuthProvider {
   user: User;
-  constructor(public http: Http) {
-    console.log('Hello AuthProvider Provider');
-  }
+  constructor(public http: Http) {}
 
-  public login(creds : { email: string, password: string }): Observable<boolean> {
+  public login(creds: Credentials): Observable<boolean> {
     if (creds.email === null || creds.password === null) {
       return Observable.throw('Please insert credentials');
     } else {
       return Observable.create(observer => {
         const access = (creds.password === 'pass' && creds.email === 'email');
         observer.next(access);
+        observer.complete();
+      })
+    }
+  }
+
+  public register(creds: Credentials): Observable<boolean> {
+    if (creds.email === null || creds.password === null) {
+      return Observable.throw('Please insert credentials');
+    } else {
+      return Observable.create(observer => {
+        observer.next(true);
         observer.complete();
       })
     }

@@ -1,12 +1,6 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
-/**
- * Generated class for the RegisterPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { IonicPage, NavController, AlertController, NavParams } from 'ionic-angular';
+import { AuthProvider, Credentials } from '../../providers/auth/auth';
 
 @IonicPage()
 @Component({
@@ -14,8 +8,42 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
   templateUrl: 'register.html',
 })
 export class RegisterPage {
+  createSuccess: boolean = false;
+  creds: Credentials = new Credentials('', '');
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private auth: AuthProvider,
+    private alertCtrl: AlertController,
+  ) {}
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  showPopup(title: string, text: string) {
+    const alert = this.alertCtrl.create({
+      title,
+      subTitle: text,
+      buttons: [
+        {
+          text: 'OK',
+          handler: data => {
+            if (this.createSuccess) {
+              this.navCtrl.popToRoot();
+            }
+          },
+        },
+      ],
+    });
+    alert.present();
+  }
+
+  public register() {
+    this.auth.register(this.creds).subscribe(success => {
+      if (success) {
+        this.createSuccess = true;
+        this.showPopup('Success', 'Account created.');
+      } else {
+        this.showPopup('Error', 'Problem creating account.');
+      }
+    })
   }
 
   ionViewDidLoad() {

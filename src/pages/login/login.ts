@@ -7,7 +7,7 @@ import {
   Loading,
   AlertController,
 } from 'ionic-angular';
-import { AuthProvider } from '../../providers/auth/auth';
+import { AuthProvider, Credentials } from '../../providers/auth/auth';
 
 @IonicPage()
 @Component({
@@ -16,7 +16,7 @@ import { AuthProvider } from '../../providers/auth/auth';
 })
 export class LoginPage {
   loading: Loading;
-  creds = { email: '', password: '' };
+  creds: Credentials = new Credentials('', '');
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -49,6 +49,7 @@ export class LoginPage {
 
   public login() {
     this.showLoading();
+    console.log('trigged login');
     this.auth.login(this.creds).subscribe(allowed => {
       if (allowed) {
         this.navCtrl.setRoot('HomePage');
