@@ -1,5 +1,5 @@
 import { Component, ViewChild, ViewChildren, QueryList } from '@angular/core';
-import { NavController, IonicPage, Loading, LoadingController } from 'ionic-angular';
+import { NavController, IonicPage, Loading, LoadingController, ModalController} from 'ionic-angular';
 import {
   StackConfig,
   DragEvent,
@@ -24,11 +24,14 @@ export class HomePage {
   recentCard: string = '';
   loading: Loading = this.loadingCtrl.create();
   toggle: boolean = false;
+  toggleFilter: boolean = false;
+  filter: string = 'all';
 
   constructor(
     public navCtrl: NavController,
-    private menu: MenuProvider,
-    private loadingCtrl: LoadingController,
+    public menu: MenuProvider,
+    public loadingCtrl: LoadingController,
+    public modalCtrl: ModalController,
   ) {
     this.stackConfig = {
       allowedDirections: [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT],
@@ -107,5 +110,14 @@ export class HomePage {
 
   toggleActive() {
     this.toggle = !this.toggle;
+  }
+
+  openDetail() {
+    const modal = this.modalCtrl.create('DishDetailPage');
+    modal.present();
+  }
+
+  capitalize(string: string): string {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 }
