@@ -1,9 +1,9 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      <div class="tinder-toggle" (click)="toggleActive()"> 
-        <div [class.active]="!toggle"><ion-icon name="md-albums"></ion-icon></div>
-        <div [class.active]="toggle"><ion-icon name="md-list"></ion-icon></div>
+      <div class="tinder-toggle" (click)="toggleView = !toggleView"> 
+        <div [class.active]="!toggleView"><ion-icon name="md-albums"></ion-icon></div>
+        <div [class.active]="toggleView"><ion-icon name="md-list"></ion-icon></div>
       </div>
     </ion-title>
     <ion-buttons end>
@@ -15,16 +15,16 @@
 </ion-header>
  
 <ion-content class="home">
-  <div *ngIf="!toggle" swing-stack #myswing1 [stackConfig]="stackConfig" (throwoutleft)="voteUp(true)" (throwoutright)="voteUp(false)" (throwoutdown)="voteUp(false)" (throwoutup)="voteUp(true)" id="card-stack" [style.zIndex]="-1000">
+  <div *ngIf="!toggleView" swing-stack #myswing1 [stackConfig]="stackConfig" (throwoutleft)="voteUp(true)" (throwoutright)="voteUp(false)" (throwoutdown)="voteUp(false)" (throwoutup)="voteUp(true)" id="card-stack" [style.zIndex]="-1000">
       <ion-card #mycards1 swing-card *ngFor="let c of cards; trackBy:trackByCards; let i=index;" [style.zIndex]="-1 * i" [style.marginTop]="i === 0 ? '0px ': '12px'">
         <ion-item>
           <img class="image" [src]="c.image">
-          <h2>{{ capitalize(c.name) }}</h2>
-          <p>{{ capitalize(c.mealtime) }}</p>
+          <h2>{{ c.name }}</h2>
+          <p>{{ c.mealtime }}</p>
+          <p>{{ c.location }}, {{ c.cafe }}</p>
         </ion-item>
 
         <ion-card-content *ngIf="c.location">
-          From: {{ capitalize(c.location) }}, {{ capitalize(c.cafe) }}<br>
           <ion-row class="preferences" >
               <img *ngIf="c.vegetarian" src="assets/imgs/vegetarian.png"/>
               <img class="preferences" *ngIf="c.vegan" src="assets/imgs/vegan.png"/>
@@ -44,7 +44,7 @@
           </button>
         </div>
     </div>
-    <div *ngIf="toggle">
+    <div *ngIf="toggleView">
       <ion-list *ngIf="toggleFilter">
         <ion-item>
           <ion-label>Location</ion-label>
@@ -62,32 +62,31 @@
         <button ion-fab mini (click)="toggleFilter = !toggleFilter"><ion-icon name="md-options"></ion-icon></button>
       </ion-fab>
       <ion-list>
-          <ion-item-sliding *ngFor="let c of cards">
+          <ion-item-sliding *ngFor="let c of list">
             <ion-item>
               <ion-thumbnail item-start>
                 <img [src]="c.image">
               </ion-thumbnail>
-              <h2>{{ capitalize(c.name) }}</h2>
-              <h3>{{ capitalize(c.mealtime) }}</h3>
-              <p>{{ capitalize(c.location) }} {{ capitalize(c.cafe) }}</p>
+              <h2>{{ c.name }}</h2>
+              <h3>{{ c.mealtime }}</h3>
+              <p>{{ c.location }}, {{ c.cafe }}</p>
             </ion-item>
             <ion-item-options side="left">
-              <button ion-button color="primary">
-                <ion-icon name="text"></ion-icon>
-                Text
-              </button>
-              <button ion-button color="secondary">
-                <ion-icon name="call"></ion-icon>
-                Call
+              <button ion-button color="danger">
+                <ion-icon name="close"></ion-icon>
+                Dislike
               </button>
             </ion-item-options>
             <ion-item-options side="right">
               <button ion-button color="primary">
-                <ion-icon name="mail"></ion-icon>
-                Email
+                <ion-icon name="heart"></ion-icon>
+                Like
               </button>
             </ion-item-options>
           </ion-item-sliding>
         </ion-list>
+        <ion-infinite-scroll (infinite)="doInfinite($event)">
+          <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        </ion-infinite-scroll>
     </div>
 </ion-content>

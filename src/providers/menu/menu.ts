@@ -4,7 +4,7 @@ import 'rxjs/add/operator/map';
 import { Subscription } from 'rxjs/Subscription';
 
 type ServingType = 'slice' | 'tablespoon' | 'cup' | 'ounce' | '3oz' | 'each';
-type MealTime = 'breakfast' | 'lunch' | 'dinner' | 'late_dinner';
+type MealTime = 'Breakfast' | 'Lunch' | 'Dinner' | 'Late Dinner';
 
 interface NuritionAmount { weight?: number, daily_value?: number };
 
@@ -40,13 +40,13 @@ export interface Dish {
   mealtime: MealTime,
 }
 
-interface Cafe {
+export interface Cafe {
   id: string,
   name: string,
   dishes: Array<Dish>,
 }
 
-interface Facility {
+export interface Facility {
   name: string,
   location: string,
   mealtime: {
@@ -57,7 +57,7 @@ interface Facility {
   }
 }
 
-interface Menu {
+export interface Menu {
   date: Date,
   dishes: Array<Dish>,
 }

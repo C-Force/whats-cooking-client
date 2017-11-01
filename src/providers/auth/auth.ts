@@ -23,6 +23,15 @@ export class Credentials {
   }
 }
 
+export interface University {
+  web_pages: Array<string>,
+  country: string,
+  'state-province': string,
+  domains: Array<string>,
+  alpha_two_code: string,
+  name: string,
+};
+
 @Injectable()
 export class AuthProvider {
   user: User;
@@ -53,6 +62,11 @@ export class AuthProvider {
 
   public getUserInfo(): User {
     return this.user;
+  }
+
+  public getUniversities(): Observable<any> {
+    return this.http.get('assets/data/data.json')
+    .map(res => res.json())
   }
 
   public logout(): Observable<boolean> {

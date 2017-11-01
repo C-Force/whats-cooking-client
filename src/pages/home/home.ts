@@ -19,11 +19,13 @@ export class HomePage {
   @ViewChildren('mycards1') swingCards: QueryList<SwingCardComponent>;
 
   count: number = 0;
+  listIndex: number = 0;
   cards: Array<Dish> = [];
+  list: Array<Dish> = [];
   stackConfig: StackConfig;
   recentCard: string = '';
   loading: Loading = this.loadingCtrl.create();
-  toggle: boolean = false;
+  toggleView: boolean = false;
   toggleFilter: boolean = false;
   filter: string = 'all';
 
@@ -49,6 +51,7 @@ export class HomePage {
     this.loading.present();
     this.menu.load().add(data => {
       this.addNewCards(3);
+      this.addNewItems();
       this.loading.dismiss();
     });
   }
@@ -93,6 +96,12 @@ export class HomePage {
     this.count += count;
   }
 
+  addNewItems(count: number = 10) {
+    const newItems = this.menu.getTodayMenu().slice(this.listIndex, this.listIndex + count);
+    this.list = this.list.concat(newItems);
+    this.listIndex += count;
+  }
+
   decimalToHex(d, padding): string {
     let hex = Number(d).toString(16);
     const tmpPadding = typeof(padding) === 'undefined' || padding === null ? padding = 2 : padding;
@@ -108,16 +117,18 @@ export class HomePage {
     return card.name;
   }
 
-  toggleActive() {
-    this.toggle = !this.toggle;
-  }
-
   openDetail() {
     const modal = this.modalCtrl.create('DishDetailPage');
     modal.present();
   }
 
-  capitalize(string: string): string {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
+  doInfinite(infiniteScroll:any) {
+    console.log('Begin async operation');
+    setTimeout(() => {
+      this.addNewItems();
+      console.log('Async operation has ended');
+      infiniteScroll.complete();
+    }, 500);
+ }
+
 }

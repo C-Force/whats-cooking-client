@@ -7,7 +7,7 @@ import {
   Loading,
   AlertController,
 } from 'ionic-angular';
-import { AuthProvider, Credentials } from '../../providers/auth/auth';
+import { AuthProvider, Credentials, University } from '../../providers/auth/auth';
 
 @IonicPage()
 @Component({
@@ -17,6 +17,9 @@ import { AuthProvider, Credentials } from '../../providers/auth/auth';
 export class LoginPage {
   loading: Loading;
   creds: Credentials = new Credentials('', '');
+  universities: Array<University>;
+  university: string = 'msu.edu';
+
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -61,8 +64,12 @@ export class LoginPage {
     })
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad LoginPage');
+  ngOnInit() {
+    this.auth.getUniversities()
+    .subscribe(data => {
+      this.universities = data.universities;
+      this.university = this.universities[0].domains[0];
+    })
   }
 
 }
