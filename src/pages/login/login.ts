@@ -52,7 +52,6 @@ export class LoginPage {
 
   public login() {
     this.showLoading();
-    console.log('trigged login');
     this.auth.login(this.creds).subscribe(allowed => {
       if (allowed) {
         this.navCtrl.setRoot('HomePage');
