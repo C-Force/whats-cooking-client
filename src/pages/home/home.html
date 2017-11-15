@@ -13,9 +13,9 @@
     </ion-buttons>
   </ion-navbar>
 </ion-header>
- 
+  
 <ion-content class="home">
-  <div *ngIf="!toggleView" swing-stack #myswing1 [stackConfig]="stackConfig" (throwoutleft)="voteUp(true)" (throwoutright)="voteUp(false)" (throwoutdown)="voteUp(false)" (throwoutup)="voteUp(true)" id="card-stack" [style.zIndex]="-1000">
+  <div *ngIf="!toggleView" swing-stack #myswing1 [stackConfig]="stackConfig" (throwoutleft)="voteUp(false)" (throwoutright)="voteUp(true)" (throwoutdown)="voteUp(false)" (throwoutup)="voteUp(true)" id="card-stack" [style.zIndex]="-1000">
       <ion-card #mycards1 swing-card *ngFor="let c of cards; trackBy:trackByCards; let i=index;" [style.zIndex]="-1 * i" [style.marginTop]="i === 0 ? '0px ': '12px'">
         <ion-item>
           <img class="image" [src]="c.image">
@@ -33,10 +33,10 @@
         
       </ion-card>
       <div class="card-actions">
-          <button class="rounded button no" (click)="voteUp(true)" ion-button icon-only>
+          <button class="rounded button no" (click)="voteUp(false)" ion-button icon-only>
             <ion-icon name="close"></ion-icon>
           </button>
-          <button class="rounded button like" (click)="voteUp(false)" ion-button icon-only>
+          <button class="rounded button like" (click)="voteUp(true)" ion-button icon-only>
             <ion-icon name="heart"></ion-icon>
           </button>
           <button class="rounded button detail" (click)="openDetail()" ion-button icon-only>
@@ -45,6 +45,7 @@
         </div>
     </div>
     <div *ngIf="toggleView">
+      <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
       <ion-list *ngIf="toggleFilter">
         <ion-item>
           <ion-label>Location</ion-label>
@@ -59,34 +60,34 @@
         </ion-item>
       </ion-list>
       <ion-fab bottom right>
-        <button ion-fab mini (click)="toggleFilter = !toggleFilter"><ion-icon name="md-options"></ion-icon></button>
+        <button ion-fab mini class="options" (click)="toggleFilter = !toggleFilter"><ion-icon name="md-options"></ion-icon></button>
       </ion-fab>
       <ion-list>
-          <ion-item-sliding *ngFor="let c of list">
-            <ion-item>
-              <ion-thumbnail item-start>
-                <img [src]="c.image">
-              </ion-thumbnail>
-              <h2>{{ c.name }}</h2>
-              <h3>{{ c.mealtime }}</h3>
-              <p>{{ c.location }}, {{ c.cafe }}</p>
-            </ion-item>
-            <ion-item-options side="left">
-              <button ion-button color="danger">
-                <ion-icon name="close"></ion-icon>
-                Dislike
-              </button>
-            </ion-item-options>
-            <ion-item-options side="right">
-              <button ion-button color="primary">
-                <ion-icon name="heart"></ion-icon>
-                Like
-              </button>
-            </ion-item-options>
-          </ion-item-sliding>
-        </ion-list>
-        <ion-infinite-scroll (infinite)="doInfinite($event)">
-          <ion-infinite-scroll-content></ion-infinite-scroll-content>
-        </ion-infinite-scroll>
+        <ion-item-sliding *ngFor="let c of list">
+          <ion-item>
+            <ion-thumbnail item-start>
+              <img [src]="c.image">
+            </ion-thumbnail>
+            <h2>{{ c.name }}</h2>
+            <h3>{{ c.mealtime }}</h3>
+            <p>{{ c.location }}, {{ c.cafe }}</p>
+          </ion-item>
+          <ion-item-options side="left">
+            <button ion-button color="danger">
+              <ion-icon name="close"></ion-icon>
+              Dislike
+            </button>
+          </ion-item-options>
+          <ion-item-options side="right">
+            <button ion-button (click)="likeDish(c)" color="primary">
+              <ion-icon name="heart"></ion-icon>
+              Like
+            </button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+      <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </div>
 </ion-content>

@@ -2,5 +2,11 @@
   "name": "whats-cooking",
   "app_id": "f22f7e1e",
   "type": "ionic-angular",
-  "integrations": {}
+  "integrations": {},
+  "proxies": [
+    {
+      "path": "/api",
+      "proxyUrl": "http://wc.cforce.me/"
+    }
+  ]
 }

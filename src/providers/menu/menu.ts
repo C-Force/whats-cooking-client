@@ -1,78 +1,42 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs/Observable';
+import moment from 'moment';
 import { Subscription } from 'rxjs/Subscription';
 
-type ServingType = 'slice' | 'tablespoon' | 'cup' | 'ounce' | '3oz' | 'each';
-type MealTime = 'Breakfast' | 'Lunch' | 'Dinner' | 'Late Dinner';
-
-interface NuritionAmount { weight?: number, daily_value?: number };
-
-interface NuritionFacts {
-  serving_size: { type: ServingType, weight: number },
-  calories: number,
-  calories_from_fat: number,
-  total_fat: NuritionAmount,
-  saturated_fat: NuritionAmount,
-  cholesterol: NuritionAmount,
-  sodium: NuritionAmount,
-  dietary_fiber: NuritionAmount,
-  sugars: NuritionAmount,
-  total_carbohydrate: NuritionAmount,
-  protein: NuritionAmount,
-  vitamin_a: NuritionAmount,
-  vitamin_c: NuritionAmount,
-  calcium: NuritionAmount,
-  iron: NuritionAmount,
-  ingredients: string,
-  contains: string,
-}
-
-export interface Dish {
-  id: string,
-  name: string,
-  image: string,
-  nurition_facts: NuritionFacts,
-  vegetarian: boolean,
-  vegan: boolean,
-  cafe: string,
-  location: string,
-  mealtime: MealTime,
-}
-
-export interface Cafe {
-  id: string,
-  name: string,
-  dishes: Array<Dish>,
-}
-
-export interface Facility {
-  name: string,
-  location: string,
-  mealtime: {
-    breakfast: Array<Cafe>,
-    lunch: Array<Cafe>,
-    dinner: Array<Cafe>,
-    late_dinner: Array<Cafe>,
-  }
-}
-
-export interface Menu {
-  date: Date,
-  dishes: Array<Dish>,
-}
+import { DishDetail, Dish } from '../models';
 
 @Injectable()
 export class MenuProvider {
   menus: Array<Dish>;
-  constructor(public http: Http) {}
+  dailyMenu: Array<DishDetail>;
+  token: string = '';
 
-  load(): Subscription {
-    return this.http.get('assets/data/data.json')
-    .map(res => res.json())
-    .subscribe(data => {
-      this.menus = data.dishes;
+  constructor(public httpClient: HttpClient) {}
+
+  setToken(token: string): void {
+    this.token = token;
+  }
+
+  load(page: number = 0, number: number = 0, offset: number = 0): Observable<any> {
+    return this.httpClient
+    .get(`http://wc.cforce.me/dish?page=${page}&pagecount=${number}&offset=${offset}`, {
+      headers: new HttpHeaders().set('x-access-token', this.token),
     });
+  }
+
+  getDish(dishId: string): Observable<any> {
+    return this.httpClient.get(`http://wc.cforce.me/dish/${dishId}`, {
+      headers: new HttpHeaders().set('x-access-token', this.token),
+    });
+  }
+
+  loadDailyMenu(): Subscription {
+    const date = moment().format('MM-DD-YYYY');
+    return this.httpClient.get(`http://wc.cforce.me/menu/${date}`, {
+      headers: new HttpHeaders().set('x-access-token', this.token),
+    }).subscribe((menus: Array<DishDetail>) => { this.dailyMenu = menus; });
   }
 
   getTodayMenu(): Array<Dish> {

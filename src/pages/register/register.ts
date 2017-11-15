@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, AlertController, NavParams } from 'ionic-angular';
-import { AuthProvider, Credentials } from '../../providers/auth/auth';
+import { AuthProvider, RegisterForm } from '../../providers/auth/auth';
 
 @IonicPage()
 @Component({
@@ -9,7 +9,7 @@ import { AuthProvider, Credentials } from '../../providers/auth/auth';
 })
 export class RegisterPage {
   createSuccess: boolean = false;
-  creds: Credentials = new Credentials('', '');
+  form: RegisterForm = new RegisterForm('', '');
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -36,14 +36,17 @@ export class RegisterPage {
   }
 
   public register() {
-    this.auth.register(this.creds).subscribe(success => {
-      if (success) {
+    this.auth.register(this.form).subscribe(result => {
+      if (result.success) {
         this.createSuccess = true;
         this.showPopup('Success', 'Account created.');
       } else {
-        this.showPopup('Error', 'Problem creating account.');
+        this.showPopup('Error', result.status);
       }
-    })
+    }),
+    error => {
+      this.showPopup('Error', error);
+    }
   }
 
   ionViewDidLoad() {

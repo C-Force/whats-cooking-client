@@ -56,5 +56,9 @@ page-login {
         font-size: 0.8em;
       }
    }
+
+   .no-scroll .scroll-content{
+    overflow: hidden;
+}
   
  }

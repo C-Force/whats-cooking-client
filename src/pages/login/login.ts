@@ -7,7 +7,7 @@ import {
   Loading,
   AlertController,
 } from 'ionic-angular';
-import { AuthProvider, Credentials, University } from '../../providers/auth/auth';
+import { AuthProvider, Credentials } from '../../providers/auth/auth';
 
 @IonicPage()
 @Component({
@@ -17,8 +17,6 @@ import { AuthProvider, Credentials, University } from '../../providers/auth/auth
 export class LoginPage {
   loading: Loading;
   creds: Credentials = new Credentials('', '');
-  universities: Array<University>;
-  university: string = 'msu.edu';
 
   constructor(
     public navCtrl: NavController,
@@ -52,23 +50,19 @@ export class LoginPage {
 
   public login() {
     this.showLoading();
-    this.auth.login(this.creds).subscribe(allowed => {
-      if (allowed) {
-        this.navCtrl.setRoot('HomePage');
+    this.auth.login(this.creds).subscribe(result => {
+      if (!result.success) {
+        this.showError(result.status);
       } else {
-        this.showError('Access Denied');
+        this.navCtrl.setRoot('HomePage');
       }
     }, error => {
+      console.log(error);
       this.showError(error);
     })
   }
 
   ngOnInit() {
-    this.auth.getUniversities()
-    .subscribe(data => {
-      this.universities = data.universities;
-      this.university = this.universities[0].domains[0];
-    })
   }
 
 }
