@@ -3,11 +3,12 @@ page-home {
   $colorfulEnd: #E65F40;
 
   .home {
-    background-color: rgb(243, 240, 240);
+    //background-color: rgb(243, 240, 240);
+    background-color: orange;
   }
   #card-stack {
     width: 95%;
-    height: 500px;
+    height: 520px;
     margin: auto;
     position: relative;
   }
@@ -19,6 +20,14 @@ page-home {
     top: 2%;
     height: 80%;
     box-shadow: 3px 3px 3px #c5c2c2;
+    background-color: rgb(243, 80, 39);
+    ion-item {
+      background-color: rgb(243, 80, 39);
+      color: white;
+      p {
+        color: white;
+      }
+    }
   }
 
   .card-title {
@@ -42,24 +51,28 @@ page-home {
   text-align: center;
   .button {
     padding: 3px 14px;
-    background-color: white;
+    //background-color: white;
     width: 62px;
     height: 62px;
     font-weight: bold;
     border: none;
     border-radius: 999em;
-    box-shadow: 2px 2px 2px #c5c2c2;
+    background-color: rgb(243, 80, 39);
+    //box-shadow: 2px 2px 2px #c5c2c2;
   }
   .like {
-    color: rgb(46, 182, 46);
+    color: white;
+    //color: rgb(46, 182, 46);
   }
 
   .no {
-    color: red;
+    color: white;
+    //color: red;
   }
 
   .detail {
-    color: rgb(0, 132, 255);
+    color: white;
+    //color: rgb(0, 132, 255);
   }
 
   position: absolute;
@@ -121,6 +134,8 @@ page-home {
 
   .preferences {
     margin: auto;
+    margin-bottom: 10px;
+    background-color: rgb(243, 80, 39);
     img {
       width: 30px;
       height: 30px;

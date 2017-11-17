@@ -13,19 +13,18 @@
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
   <ion-list>
-    <ion-item-sliding *ngFor="let c of list">
+    <ion-item-sliding *ngFor="let c of auth.user.favorites">
       <ion-item>
         <ion-thumbnail item-start>
           <img [src]="c.image">
         </ion-thumbnail>
         <h2>{{ c.name }}</h2>
-        <h3>{{ c.mealtime }}</h3>
-        <p>{{ c.location }}, {{ c.cafe }}</p>
+        <p *ngIf="c.contains">Contains: {{ c.contains }} </p>
       </ion-item>
       <ion-item-options side="right">
-        <button ion-button color="danger">
+        <button ion-button (click)="dislikeDish(c)" color="danger">
           <ion-icon name="close"></ion-icon>
           Dislike
         </button>

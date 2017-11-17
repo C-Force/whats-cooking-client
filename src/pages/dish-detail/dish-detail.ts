@@ -41,6 +41,10 @@ export class DishDetailPage {
     this.auth.addFavorite(this.dish._id).add(() => this.favorited = true);
   }
 
+  dislikeDish() {
+    this.auth.delFavorite(this.dish._id).add(() => this.favorited = false);
+  }
+
   dismiss() {
     this.viewCtrl.dismiss();
   }

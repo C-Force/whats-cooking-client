@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, AlertController, NavParams } from 'ionic-angular';
-import { AuthProvider, RegisterForm } from '../../providers/auth/auth';
+import { AuthProvider } from '../../providers/auth/auth';
+import { RegisterForm } from '../../providers/models';
 
 @IonicPage()
 @Component({

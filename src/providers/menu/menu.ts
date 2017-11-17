@@ -39,6 +39,12 @@ export class MenuProvider {
     }).subscribe((menus: Array<DishDetail>) => { this.dailyMenu = menus; });
   }
 
+  searchDish(dishName: string): Observable<any> {
+    return this.httpClient.get(`http://wc.cforce.me/search/${dishName}`, {
+      headers: new HttpHeaders().set('x-access-token', this.token),
+    });
+  }
+
   getTodayMenu(): Array<Dish> {
     return this.menus;
   }

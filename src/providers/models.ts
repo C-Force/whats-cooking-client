@@ -21,21 +21,22 @@ export type MealTime = 'Breakfast' | 'Lunch' | 'Dinner' | 'Late Dinner';
 //   iron: NuritionAmount,
 // }
 
-export interface DishDetail extends Dish {
-  //nurition_facts: NuritionFacts,
-  //ingredients: string,
-  contains: string,
-  location: string,
-  mealtime: MealTime,
+export class Dish {
+  _id: string;
+  name: string;
+  image: string;
+  vegetarian: boolean;
+  vegan: boolean;
+  contains: string;
+  favorited: boolean = false;
 }
 
-export interface Dish {
-  _id: string,
-  name: string,
-  image: string,
-  vegetarian: boolean,
-  vegan: boolean,
-  contains: string,
+export class DishDetail extends Dish {
+  //nurition_facts: NuritionFacts,
+  //ingredients: string,
+  contains: string;
+  location: string;
+  mealtime: MealTime;
 }
 
 export class Credentials {

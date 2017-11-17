@@ -152,8 +152,8 @@
       <button class="rounded button" ion-button icon-only>
         <ion-icon name="md-add"></ion-icon>
       </button>
-      <button class="rounded button" ion-button icon-only>
-        <ion-icon name="ios-heart-outline"></ion-icon>
+      <button class="rounded button" (click)="favorited ? dislikeDish() : likeDish()" ion-button icon-only>
+        <ion-icon [name]="favorited ? 'ios-heart' : 'ios-heart-outline'"></ion-icon>
       </button>
       <button class="rounded button" ion-button icon-only>
         <ion-icon name="ios-more"></ion-icon>

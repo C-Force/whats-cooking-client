@@ -13,7 +13,7 @@ export class AuthProvider {
   authUser = new ReplaySubject<any>(1);
   private jwtTokenName = 'token';
   private token: string;
-  private user: User;
+  public user: User;
 
   constructor(
     private readonly httpClient: HttpClient,
@@ -27,6 +27,7 @@ export class AuthProvider {
         }).subscribe((user: User) => {
           this.token = jwt;
           this.user = user;
+          console.log(this.user);
         })
       }
     });
@@ -42,14 +43,15 @@ export class AuthProvider {
   private handleJwtResponse(jwt: string) {
     return this.storage.set(this.jwtTokenName, jwt)
       .then(() => this.authUser.next(jwt))
-      .then(() => { this.token = jwt; return jwt; });
+      .then(() => { this.token = jwt; console.log(this.token); return jwt; });
   }
 
   checkLogin() {
     this.storage.get('token').then(jwt => {
       if (jwt && !this.jwtHelper.isTokenExpired(jwt)) {
-        this.httpClient.get('http://wc.cforce.me/authenticate')
-          .subscribe(() => this.authUser.next(jwt),
+        this.httpClient.get('http://wc.cforce.me/authenticate', {
+          headers: new HttpHeaders().set('x-access-token', jwt),
+        }).subscribe(() => this.authUser.next(jwt),
             (err) => this.storage.remove(this.jwtTokenName).then(() => this.authUser.next(null)));
         // OR
         // this.authUser.next(jwt);
@@ -90,10 +92,11 @@ export class AuthProvider {
   }
 
   public addFavorite(dishId: string) {
-    return this.httpClient.put(`http://wc.cforce.me/user/dish/${dishId}`, {
+    return this.httpClient.get(`http://wc.cforce.me/user/dish/${dishId}`, {
       headers: new HttpHeaders().set('x-access-token', this.token),
     }).subscribe((user: User) => {
       this.user = user;
+      console.log(this.user.favorites);
     });
   }
 
@@ -102,6 +105,7 @@ export class AuthProvider {
       headers: new HttpHeaders().set('x-access-token', this.token),
     }).subscribe((user: User) => {
       this.user = user;
+      console.log(this.user.favorites);
     });
   }
 

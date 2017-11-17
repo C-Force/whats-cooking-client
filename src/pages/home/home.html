@@ -7,8 +7,8 @@
       </div>
     </ion-title>
     <ion-buttons end>
-      <button ion-button icon-only>
-        <ion-icon name="person"></ion-icon>
+      <button (click)="openPersonal()" ion-button icon-only>
+        <ion-icon style="color:rgb(243, 80, 39);" name="person"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -20,14 +20,22 @@
         <ion-item>
           <img class="image" [src]="c.image">
           <h2>{{ c.name }}</h2>
-          <p>{{ c.mealtime }}</p>
-          <p>{{ c.location }}, {{ c.cafe }}</p>
+          <p *ngIf="c.contains">Contains: {{ c.contains }}</p>
+          <p *ngIf="c.mealtime">{{ c.mealtime }}</p>
+          <p *ngIf="c.location">Serving at {{ c.location }}</p>
         </ion-item>
 
-        <ion-card-content *ngIf="c.location">
+        <ion-card-content *ngIf="c">
           <ion-row class="preferences" >
+            <ion-col style="left: -40px; bottom: -15px;">
               <img *ngIf="c.vegetarian" src="assets/imgs/vegetarian.png"/>
-              <img class="preferences" *ngIf="c.vegan" src="assets/imgs/vegan.png"/>
+            </ion-col>
+            <ion-col>
+              <ion-icon style="color:white; zoom: 2.0;" (click)="openDetail()" name="md-list-box"></ion-icon>
+            </ion-col>
+            <ion-col style="right: -40px; bottom: -15px;">
+              <img *ngIf="c.vegan" src="assets/imgs/vegan.png"/>
+            </ion-col>
           </ion-row>
         </ion-card-content>
         
@@ -39,54 +47,34 @@
           <button class="rounded button like" (click)="voteUp(true)" ion-button icon-only>
             <ion-icon name="heart"></ion-icon>
           </button>
-          <button class="rounded button detail" (click)="openDetail()" ion-button icon-only>
-            <ion-icon name="md-list-box"></ion-icon>
-          </button>
         </div>
     </div>
     <div *ngIf="toggleView">
       <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
-      <ion-list *ngIf="toggleFilter">
-        <ion-item>
-          <ion-label>Location</ion-label>
-          <ion-select [(ngModel)]="filter" interface="popover">
-            <ion-option selected="true" value="all">All</ion-option>
-            <ion-option value="brody">Brody</ion-option>
-            <ion-option value="case">Case</ion-option>
-            <ion-option value="wilson">Wilson</ion-option>
-            <ion-option value="holden">Holden</ion-option>
-            <ion-option value="landon">Landon</ion-option>
-          </ion-select>
-        </ion-item>
-      </ion-list>
-      <ion-fab bottom right>
-        <button ion-fab mini class="options" (click)="toggleFilter = !toggleFilter"><ion-icon name="md-options"></ion-icon></button>
-      </ion-fab>
       <ion-list>
-        <ion-item-sliding *ngFor="let c of list">
+        <ion-item-sliding *ngFor="let c of (searchResults ? searchResults : list); let i = index">
           <ion-item>
             <ion-thumbnail item-start>
               <img [src]="c.image">
             </ion-thumbnail>
             <h2>{{ c.name }}</h2>
-            <h3>{{ c.mealtime }}</h3>
-            <p>{{ c.location }}, {{ c.cafe }}</p>
+            <h3 *ngIf="c.location">Serving at {{ c.location }}</h3>
+            <p *ngIf="c.contains">Contains: {{ c.contains }} </p>
+            <ion-icon *ngIf="c.favorited" name="md-heart" style="color: red;" item-end></ion-icon>
           </ion-item>
-          <ion-item-options side="left">
-            <button ion-button color="danger">
+          <ion-item-options side="right">
+            <button *ngIf="!c.favorited" ion-button (click)="likeDish(c, i)" color="primary">
+              <ion-icon name="heart"></ion-icon>
+              Like
+            </button>
+            <button *ngIf="c.favorited" ion-button (click)="dislikeDish(c, i)" color="danger">
               <ion-icon name="close"></ion-icon>
               Dislike
             </button>
           </ion-item-options>
-          <ion-item-options side="right">
-            <button ion-button (click)="likeDish(c)" color="primary">
-              <ion-icon name="heart"></ion-icon>
-              Like
-            </button>
-          </ion-item-options>
         </ion-item-sliding>
       </ion-list>
-      <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+      <ion-infinite-scroll *ngIf="!searchResults" (ionInfinite)="doInfinite($event)">
         <ion-infinite-scroll-content></ion-infinite-scroll-content>
       </ion-infinite-scroll>
     </div>

@@ -7,8 +7,9 @@ import {
   SwingCardComponent,
   SwingStackComponent,
 } from 'angular2-swing';
-import { MenuProvider, Dish } from '../../providers/menu/menu';
+import { MenuProvider } from '../../providers/menu/menu';
 import { AuthProvider } from '../../providers/auth/auth';
+import { Dish, DishDetail, User } from '../../providers/models';
 
 @IonicPage()
 @Component({
@@ -21,8 +22,9 @@ export class HomePage {
 
   cardIndex: number = 0;
   listIndex: number = 0;
-  cards: Array<Dish> = [];
-  list: Array<Dish> = [];
+  cards: Array<Dish | DishDetail> = [];
+  list: Array<Dish | DishDetail> = [];
+  searchResults: Array<Dish> = null;
   stackConfig: StackConfig;
   recentCard: string = '';
   loading: Loading = this.loadingCtrl.create();
@@ -54,11 +56,13 @@ export class HomePage {
     this.loading.present();
     this.auth.getToken().then((token: string) => {
       this.menu.setToken(token);
-      this.addNewCards(3).add(() => {
-        this.addNewItems().add(() => {
-          this.loading.dismiss();
+      this.menu.loadDailyMenu().add(() => {
+        this.addNewCards(3).add(() => {
+          this.addNewItems().add(() => {
+            this.loading.dismiss();
+          });
         });
-      });
+      })
     })
   }
 
@@ -78,18 +82,18 @@ export class HomePage {
   }
 
   onItemMove(element, x, y, r) {
-    let color = '';
-    const abs = Math.abs(x);
-    const min = Math.trunc(Math.min(16 * 16 - abs, 16 * 16));
-    const hexCode = this.decimalToHex(min, 2);
+    // let color = '';
+    // const abs = Math.abs(x);
+    // const min = Math.trunc(Math.min(16 * 16 - abs, 16 * 16));
+    // const hexCode = this.decimalToHex(min, 2);
 
-    if (x < 0) {
-      color = `#FF${hexCode}${hexCode}`;
-    } else {
-      color = `#${hexCode}FF${hexCode}`;
-    }
+    // if (x < 0) {
+    //   color = `#FF${hexCode}${hexCode}`;
+    // } else {
+    //   color = `#${hexCode}FF${hexCode}`;
+    // }
 
-    element.style.background = color;
+    //element.style.background = color;
     element.style['transform'] = `translate3d(0, 0, 0) translate(${x}px, ${y}px) rotate(${r}deg)`;
   }
 
@@ -109,7 +113,9 @@ export class HomePage {
   addNewCards(count: number = 1, offset: number = 0) {
     return this.menu.load(this.cardIndex, count, offset).subscribe((newCards: Array<Dish>) => {
       for (let card of newCards) {
-        this.cards.push(card);
+        const serve = this.menu.dailyMenu.find(dish => dish.name === card.name);
+        this.cards.push(serve ? serve : card);
+        //this.cards.push(card);
       };
       ++this.cardIndex;
     });
@@ -118,7 +124,16 @@ export class HomePage {
   addNewItems(count: number = 10, offset: number = 0) {
     return this.menu.load(this.listIndex, count, offset).subscribe((newItems: Array<Dish>) => {
       for (let item of newItems) {
-        this.list.push(item);
+        const serve = this.menu.dailyMenu.find(dish => dish.name === item.name);
+        if (serve) {
+          serve.favorited = this.auth.user.favorites
+                            .find(dish => dish.name === serve.name) !== undefined;
+          this.list.push(serve);
+        } else {
+          item.favorited = this.auth.user.favorites
+          .find(dish => dish.name === item.name) !== undefined;
+          this.list.push(item);
+        }
       };
       ++this.listIndex;
     });
@@ -145,27 +160,50 @@ export class HomePage {
   }
 
   doInfinite(infiniteScroll:any) {
-    console.log('Begin async operation');
     this.addNewItems().add(() => {
-      console.log('Async operation has ended');
       infiniteScroll.complete();
     });
   }
 
-  likeDish(dish: Dish) {
+  likeDish(dish: Dish, index: number) {
     this.addFavoriteSuccessful(dish);
-    this.auth.addFavorite(dish._id);
+    this.auth.addFavorite(dish._id).add((user: User) => {
+      if (this.searchResults) {
+        this.searchResults[index].favorited = true;
+      } else {
+        this.list[index].favorited = true;
+      }
+    });
+  }
+
+  dislikeDish(dish: Dish, index: number) {
+    this.addFavoriteSuccessful(dish);
+    this.auth.addFavorite(dish._id).add((user: User) => {
+      if (this.searchResults) {
+        this.searchResults[index].favorited = false;
+      } else {
+        this.list[index].favorited = false;
+      }
+    });
+  }
+
+  openPersonal() {
+    this.navCtrl.push('PersonalPage');
   }
 
   getItems(ev: any) {
-    // set val to the value of the searchbar
-    const val = ev.target.value;
-
-    // if the value is an empty string don't filter the items
-    if (val && val.trim() != '') {
-      this.list = this.list.filter((item) => {
-        return (item.name.toLowerCase().indexOf(val.toLowerCase()) > -1);
+    const searchText = ev.target.value;
+    if (searchText) {
+      this.menu.searchDish(searchText).subscribe((results: Dish[]) => {
+        results = results.map(result => ({
+          ...result,
+          favorited: this.auth.user.favorites
+          .find(dish => dish.name === result.name) !== undefined,
+        }))
+        this.searchResults = results;
       })
+    } else {
+      this.searchResults = null;
     }
   }
 

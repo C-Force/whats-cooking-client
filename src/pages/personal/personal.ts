@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
+import { AuthProvider } from '../../providers/auth/auth';
+import { Dish } from '../../providers/models';
+
 /**
  * Generated class for the PersonalPage page.
  *
@@ -15,11 +18,18 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class PersonalPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-  }
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private readonly auth: AuthProvider,
+  ) {}
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad FavoritePage');
+  }
+
+  dislikeDish(dish: Dish) {
+    this.auth.delFavorite(dish._id);
   }
 
 }

@@ -7,7 +7,8 @@ import {
   Loading,
   AlertController,
 } from 'ionic-angular';
-import { AuthProvider, Credentials } from '../../providers/auth/auth';
+import { AuthProvider } from '../../providers/auth/auth';
+import { Credentials } from '../../providers/models';
 
 @IonicPage()
 @Component({
